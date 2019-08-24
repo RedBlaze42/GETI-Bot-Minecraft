@@ -1,3 +1,4 @@
+# coding: utf8
 import discord
 import time
 from tools import getToken, getRole

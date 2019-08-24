@@ -1,3 +1,4 @@
+# coding: utf8
 import discord
 import json
 from tools import getToken,getRole

@@ -1,3 +1,4 @@
+# coding: utf8
 
 def getToken():
     with open("token.secret","r") as tokenFile:

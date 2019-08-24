@@ -1,6 +1,7 @@
 import discord
 from tools import getRole
 
+# coding: utf8
 class cmd_handler():
     
     def __init__(self, client):
