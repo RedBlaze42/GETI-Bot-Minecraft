@@ -15,7 +15,9 @@ async def on_message(message):
     content=message.content
     user_permissions = message.channel.permissions_for(message.author)
     if content.startswith("!mine ") and (len(content.split(" "))>=2):
-        await cmd_handler.handle_cmd(message)
+        cmd_return = await cmd_handler.handle_cmd(message)
+        if cmd_return!=None:
+            await message.channel.send(cmd_return)
         
 @client.event
 async def on_raw_reaction_add(payload):
