@@ -11,16 +11,27 @@ class cmd_handler():
         method_list = [func.split("cmd_")[1] for func in dir(self) if callable(getattr(self, func)) and func.startswith("cmd_")]
         doc_list=list()
         for method in method_list:
-            doc_list.append(getattr(self, "cmd_"+method).__doc__)
-        return list(zip(method_list,doc_list))
+            doc_list.append(getattr(self, "cmd_"+method).__doc__.split("\n")[0])
+        help_list = list(zip(method_list,doc_list))
+        help_embed=discord.Embed(title="Aide du bot GETI-Minecraft",color=65310)
+        for func_name,func_doc in help_list:
+            help_embed.add_field(name=func_name,value=func_doc)
+        return help_embed
 
     async def handle_cmd(self,message):
         args = message.content.split(" ")[1:]
-        if args[0]=="dmRole" and type(message.channel)==discord.channel.TextChannel:#TODO séparer fonctions (tableau d'attributes)
+        if args[0]=="help":
+            await message.author.send(embed=self.help())
+        elif args[0]=="dmRole" and type(message.channel)==discord.channel.TextChannel:
             return await self.cmd_dmRole(message,args)
     
     async def cmd_dmRole(self,message,args):
-        """Hey je suis là !"""
+        """Permet d'envoyer un message privé à tout les membres d'un rôle
+        
+        Usage: !mine dmRole <nom_du_rôle> Message
+        <nom_du_rôle> doit être sans @ pour l'instant
+        """
+
         channel=message.channel
         role_name=args[1]
         guild = channel.guild
