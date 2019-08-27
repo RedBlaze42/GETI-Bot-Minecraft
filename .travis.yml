@@ -9,4 +9,4 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - main
+  - echo $discord_token >token.secret && python main.py
