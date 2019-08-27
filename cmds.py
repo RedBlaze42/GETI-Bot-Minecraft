@@ -22,6 +22,8 @@ class cmd_handler():
         args = message.content.split(" ")[1:]
         if args[0]=="help":
             await message.author.send(embed=self.help())
+            await message.delete()
+            await message.channel.send("Aide envoyé en MP !", delete_after=3)
         elif args[0]=="dmRole" and type(message.channel)==discord.channel.TextChannel:
             return await self.cmd_dmRole(message,args)
     
