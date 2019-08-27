@@ -1,7 +1,7 @@
 # coding: utf8
 import discord
 import json
-from tools import getToken,getRole
+from tools import getToken,getRole,send_join_message
 import cmds
 
 client = discord.Client()
@@ -10,6 +10,10 @@ cmd_handler=cmds.cmd_handler(client)
 @client.event
 async def on_ready():
     print("Bot prêt !")
+
+@client.event
+async def on_member_join(member):
+    await send_join_message(member)
 
 @client.event
 async def on_message(message):
