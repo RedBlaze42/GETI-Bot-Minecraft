@@ -53,7 +53,7 @@ class cmd_handler():
         embed=discord.Embed(title="Message important !", url=message_url, description="Ce message viens du canal <#"+str(channel.id)+">", color=0x0aff00)
         embed.set_author(name="GETI Minecraft",icon_url="https://cdn.discordapp.com/icons/579688801614430222/65b77fc578d04f061b157795daa2cb75.webp?size=128")
         embed.set_thumbnail(url="https://i.imgur.com/OyEFPXv.jpg")
-        embed.add_field(name=first_line, value=message_content[len(first_line):100]+"...",inline=False)
+        embed.add_field(name=first_line, value=message_content[len(first_line):len(first_line)+120]+"...",inline=False)
         embed.add_field(name="Pour voir le message complet cliquez ici",value="[message]("+message_url+")",inline=False)
         embed.set_footer(text="Notification GETI Minecraft")
         

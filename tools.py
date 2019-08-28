@@ -8,7 +8,6 @@ def getToken():
 
 async def getRole(client,guild,role_name,create_if_not_created=True):
     for role in guild.roles:
-        print(role.name,role_name)
         if role.name==role_name:
             return role
     if create_if_not_created:
