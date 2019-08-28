@@ -67,6 +67,7 @@ class cmd_handler():
         else:
             channel=message.channel
         if channel is None: return "Ce canal n'existe pas !"
+        cmd=message
         message=await channel.fetch_message(int(args[1]))
         if message is None: return "Ce message n'existe pas !"
         guild=channel.guild
@@ -97,8 +98,8 @@ class cmd_handler():
             for role in roles:
                 j=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
                 i+=j
-        await message.delete()
-        await message.channel.send("Message envoyé à "+str(i)+" membre(s)",delete_after=5)
+        await cmd.delete()
+        await cmd.channel.send("Message envoyé à "+str(i)+" membre(s)",delete_after=5)
 
     async def cmd_dmRole(self,message,args):
         """Permet d'envoyer un message privé à tout les membres d'un rôle
