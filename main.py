@@ -20,7 +20,7 @@ async def on_message(message):
     content=message.content
     if not message.author.bot:
         user_permissions = message.channel.permissions_for(message.author)
-        if content.startswith("!mine ") and (len(content.split(" "))>=2):
+        if content.startswith("!mine ") and len(content.split(" "))>=2 and user_permissions.administrator:
             await message.channel.trigger_typing()
             cmd_return = await cmd_handler.handle_cmd(message)
             if cmd_return!=None:
