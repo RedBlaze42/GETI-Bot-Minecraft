@@ -77,10 +77,11 @@ class cmd_handler():
         else:
             roles="everyone"
         message_content=escape_special_mentions(message.content)
+        print(message_content.split("\n"))
         i=0
-        while message_content.split("\n")[i]=="":
-            first_line=message_content.split("\n")[i]
+        while message_content.split("\n")[i]==" ":
             i+=1
+        first_line=message_content.split("\n")[i]
         message_url="https://discordapp.com/channels/"+str(guild.id)+"/"+str(channel.id)+"/"+str(message.id)
 
         embed=discord.Embed(title="Message important !", description="Ce message viens du canal <#"+str(channel.id)+">", color=0x0aff00)
