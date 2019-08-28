@@ -68,9 +68,9 @@ class cmd_handler():
 
         if len(message.role_mentions)==0 and not message.mention_everyone: return "Aucun rôle n'est mentionné dans ce message"
         if not message.mention_everyone:
-            role=message.role_mentions[0]
+            roles=message.role_mentions
         else:
-            role="everyone"
+            roles="everyone"
         message_content=escape_special_mentions(message.content)
         first_line=message_content.split("\n")[0]
         message_url="https://discordapp.com/channels/"+str(guild.id)+"/"+str(channel.id)+"/"+str(message.id)
@@ -81,8 +81,13 @@ class cmd_handler():
         embed.add_field(name=first_line, value=message_content[len(first_line):len(first_line)+120]+"...",inline=False)
         embed.add_field(name="Pour voir le message complet cliquez ici",value="[message]("+message_url+")",inline=False)
         embed.set_footer(text="Notification GETI Minecraft")
-        
-        i=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
+        i=0
+        if roles=="everyone":
+            i=await send_dm_to_role(guild,"everyone","Vous avez une nouvelle notification:",embed=embed)
+        else:
+            for role in roles:
+                i+=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
+    
         return "Message envoyé à "+str(i)+" membre(s)"
     async def cmd_dmRole(self,message,args):
         """Permet d'envoyer un message privé à tout les membres d'un rôle
