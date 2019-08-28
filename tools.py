@@ -34,6 +34,14 @@ async def send_dm_to_role(guild,role,send_message,embed=None):
             i+=1
     return i
 
+async def purge_role(guild,role):
+    i=0
+    for member in guild.members:
+        if role in member.roles:
+            await member.remove_roles(role)
+            i+=1
+    return i
+
 def escape_special_mentions(content):
     message=content.replace("@deleted-role","")
     #message=re.sub(r"<#([\s\S]){18}> ","",message)
