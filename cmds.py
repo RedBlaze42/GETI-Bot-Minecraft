@@ -1,5 +1,5 @@
 import discord
-from tools import getRole
+from tools import getRole,send_dm_to_role,escape_special_mentions
 
 # coding: utf8
 class cmd_handler():
@@ -26,26 +26,51 @@ class cmd_handler():
             await message.channel.send("Aide envoyé en MP !", delete_after=3)
         elif args[0]=="dmRole" and type(message.channel)==discord.channel.TextChannel:
             return await self.cmd_dmRole(message,args)
+        elif args[0]=="dmMessage" and type(message.channel)==discord.channel.TextChannel:
+            return await self.cmd_dmMessage(message,args)
+
     
+    async def cmd_dmMessage(self,message,args):
+        """Envoie une notification par dm au rôle mentionné dans le message
+
+        Usage: !mine dmMessage <id_du_canal> <id_du_message>
+        """
+        channel=self.client.get_channel(int(args[1]))
+        if channel is None: return "Ce canal n'existe pas !"
+        message=await channel.fetch_message(int(args[2]))
+        if message is None: return "Ce message n'existe pas !"
+        guild=channel.guild
+
+        if len(message.role_mentions)==0 and not message.mention_everyone: return "Aucun rôle n'est mentionné dans ce message"
+        if not message.mention_everyone:
+            role=message.role_mentions[0]
+        else:
+            role="everyone"
+        message_content=escape_special_mentions(message.content)
+        first_line=message_content.split("\n")[0]
+        message_url="https://discordapp.com/channels/"+str(guild.id)+"/"+str(channel.id)+"/"+str(message.id)
+
+        embed=discord.Embed(title="Message important !", url=message_url, description="Ce message viens du canal <#"+str(channel.id)+">", color=0x0aff00)
+        embed.set_author(name="GETI Minecraft",icon_url="https://cdn.discordapp.com/icons/579688801614430222/65b77fc578d04f061b157795daa2cb75.webp?size=128")
+        embed.set_thumbnail(url="https://i.imgur.com/OyEFPXv.jpg")
+        embed.add_field(name=first_line, value=message_content[len(first_line):100]+"...",inline=False)
+        embed.add_field(name="Pour voir le message complet cliquez ici",value="[message]("+message_url+")",inline=False)
+        embed.set_footer(text="Notification GETI Minecraft")
+        
+        i=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
+        return "Message envoyé à "+str(i)+" membre(s)"
     async def cmd_dmRole(self,message,args):
         """Permet d'envoyer un message privé à tout les membres d'un rôle
         
-        Usage: !mine dmRole <nom_du_rôle> Message
-        <nom_du_rôle> doit être sans @ pour l'instant
+        Usage: !mine dmRole @<nom_du_rôle> Message
         """
-
-        channel=message.channel
-        role_name=args[1]
-        guild = channel.guild
-        role = await getRole(self.client,guild,role_name,create_if_not_created=False)
-
-        if role!=None or role_name=="everyone":
-            send_message=" ".join(args[2:])
-            i=0
-            for member in guild.members:
-                if (role in member.roles or role_name=="everyone") and not member.bot:
-                    await member.send(send_message)
-                    i+=1
-            return "Message envoyé à "+str(i)+" membre(s)"
+        if len(message.role_mentions)==0 and not message.mention_everyone: return "Ce rôle n'existe pas"
+        if not message.mention_everyone:
+            role=message.role_mentions[0]
         else:
-            return "Le role "+role_name+" n'existe pas"
+            role="everyone"
+        guild = message.channel.guild
+        send_message=" ".join(args[2:])
+
+        i=send_dm_to_role(guild,role,send_message)
+        return "Message envoyé à "+str(i)+" membre(s)"

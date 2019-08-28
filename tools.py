@@ -1,5 +1,6 @@
 # coding: utf8
 import discord
+import re
 
 def getToken():
     with open("token.secret","r") as tokenFile:
@@ -7,6 +8,7 @@ def getToken():
 
 async def getRole(client,guild,role_name,create_if_not_created=True):
     for role in guild.roles:
+        print(role.name,role_name)
         if role.name==role_name:
             return role
     if create_if_not_created:
@@ -21,6 +23,20 @@ async def send_join_message(member):
     embed.set_author(name="GETI MINECRAFT", url="https://discord.gg/fuUR9Qe", icon_url="https://cdn.discordapp.com/icons/579688801614430222/65b77fc578d04f061b157795daa2cb75.webp?size=128")
     embed.set_footer(text="Message de bienvenue", icon_url="https://cdn.discordapp.com/icons/579688801614430222/65b77fc578d04f061b157795daa2cb75.webp?size=128")
 
-    embed.add_field(name="Nos évènements", value="Le serveur GETI MINECRAFT hébèrge différent type d'évènement:\n -Cité des sables\n -KTP, Taupe Gun et Switch the Patrick\n -Fallen kingoms\n -Survie")
-    embed.add_field(name="Vous inscrire", value="Pour vous inscrire à ces évènements il faut vous rendre sur ce [message](https://discordapp.com/channels/579688801614430222/585843555826663434/615943002485161985)")
+    embed.add_field(name="Nos évènements", value="Le serveur GETI MINECRAFT hébèrge différent type d'évènement:\n -Cité des sables\n -KTP, Taupe Gun et Switch the Patrick\n -Fallen kingoms\n -Survie",inline=False)
+    embed.add_field(name="Vous inscrire", value="Pour vous inscrire à ces évènements il faut vous rendre sur ce [message](https://discordapp.com/channels/579688801614430222/585843555826663434/615943002485161985)",inline=False)
     await member.send(embed=embed)
+
+async def send_dm_to_role(guild,role,send_message,embed=None):
+    i=0
+    for member in guild.members:
+        if (role in member.roles or role=="everyone") and not member.bot:
+            await member.send(send_message,embed=embed)
+            i+=1
+    return i
+
+def escape_special_mentions(content):
+    message=content.replace("@deleted-role","")
+    #message=re.sub(r"<#([\s\S]){18}> ","",message)
+    message=re.sub(r"<@([\s\S]){19}>","",message)
+    return message
