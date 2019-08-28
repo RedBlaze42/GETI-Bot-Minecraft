@@ -91,9 +91,10 @@ class cmd_handler():
             i=await send_dm_to_role(guild,"everyone","Vous avez une nouvelle notification:",embed=embed)
         else:
             for role in roles:
-                i+=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
-        message.delete()
-        message.channel.send("Message envoyé à "+str(i)+" membre(s)",delete_after=5)
+                j=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
+                i+=j
+        await message.delete()
+        await message.channel.send("Message envoyé à "+str(i)+" membre(s)",delete_after=5)
 
     async def cmd_dmRole(self,message,args):
         """Permet d'envoyer un message privé à tout les membres d'un rôle
