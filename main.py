@@ -33,7 +33,7 @@ async def on_raw_reaction_add(payload):
     if emoji.name.startswith("role_"):
         give_role = await getRole(client,guild,emoji.name.split("role_")[1])
         await member.add_roles(give_role)
-        await member.send("Je vous ai donné le role "+give_role.name)
+        #await member.send("Je vous ai donné le role "+give_role.name)
 
 @client.event
 async def on_raw_reaction_remove(payload):
