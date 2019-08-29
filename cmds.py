@@ -78,7 +78,6 @@ class cmd_handler():
         else:
             roles="everyone"
         message_content=escape_special_mentions(message.content)
-        print(message_content.split("\n"))
         i=0
         while message_content.split("\n")[i]==" ":
             i+=1
