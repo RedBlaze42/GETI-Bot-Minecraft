@@ -34,7 +34,7 @@ async def send_dm_to_role(guild,role,send_message,embed=None):
                 await member.send(send_message,embed=embed)
                 i+=1
             except:
-                pass
+                print("Je n'ai pas pu envoyer de message à "+member.name)
     return i
 
 async def purge_role(guild,role):

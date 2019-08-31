@@ -19,13 +19,15 @@ async def on_member_join(member):
 async def on_message(message):
     content=message.content
     if not message.author.bot:
-        user_permissions = message.channel.permissions_for(message.author)
-        if content.startswith("!mine ") and len(content.split(" "))>=2 and user_permissions.administrator:
-            await message.channel.trigger_typing()
-            cmd_return = await cmd_handler.handle_cmd(message)
-            if cmd_return!=None:
-                await message.channel.send(cmd_return)
-        
+        if message.channel.type==discord.ChannelType.text:
+            user_permissions = message.channel.permissions_for(message.author)
+            if content.startswith("!mine ") and len(content.split(" "))>=2 and user_permissions.administrator:
+                await message.channel.trigger_typing()
+                cmd_return = await cmd_handler.handle_cmd(message)
+                if cmd_return is not None:
+                    await message.channel.send(cmd_return)
+        else:
+            await message.channel.send("❌ Désolé je ne peux pas encore éxecuter de commandes par message privé :sob:")
 @client.event
 async def on_raw_reaction_add(payload):
     channel, guild, emoji = client.get_channel(payload.channel_id), client.get_guild(payload.guild_id), payload.emoji
