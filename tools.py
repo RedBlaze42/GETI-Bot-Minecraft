@@ -30,8 +30,11 @@ async def send_dm_to_role(guild,role,send_message,embed=None):
     i=0
     for member in guild.members:
         if (role in member.roles or role=="everyone") and not member.bot:
-            await member.send(send_message,embed=embed)
-            i+=1
+            try:
+                await member.send(send_message,embed=embed)
+                i+=1
+            except:
+                pass
     return i
 
 async def purge_role(guild,role):
