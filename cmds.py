@@ -1,5 +1,6 @@
 import discord
 from tools import *
+from copy import copy
 
 # coding: utf8
 class cmd_handler():
@@ -20,6 +21,8 @@ class cmd_handler():
         args = message.content.split(" ")[1:]
         if args[0] in self.help().keys():
             return await getattr(self, "cmd_"+args[0])(message,args)
+        else:
+            return "❌ Cette commande n'existe pas: !mine help pour l'aide"
 
     async def cmd_help(self,message,args):
         """Affiche l'aide !mine help détail pour afficher l'uttilisation des commandes
@@ -83,7 +86,6 @@ class cmd_handler():
                 members_not_unmuted+=1
         await message.channel.send("✅ "+str(i)+" membre(s) unmuté(s) et " +str(members_not_unmuted)+" l'étaient déjà")
 
-
     async def cmd_dmMessage(self,message,args):
         """Envoie une notification par dm au rôle mentionné dans le message
 
@@ -107,12 +109,10 @@ class cmd_handler():
             roles=message.role_mentions
         else:
             roles="everyone"
-        message_content=escape_special_mentions(message.content)
-        i=0
-        while message_content.split("\n")[i]==" ":
-            i+=1
-        first_line=message_content.split("\n")[i]
-        message_url="https://discordapp.com/channels/"+str(guild.id)+"/"+str(channel.id)+"/"+str(message.id)
+
+        message_content=message.clean_content
+        first_line=message_content.split("\n")[0]
+        message_url=message.jump_url
 
         embed=discord.Embed(title="Message important !", description="Ce message viens du canal <#"+str(channel.id)+">", color=0x0aff00)
         embed.set_author(name="GETI Minecraft",icon_url="https://cdn.discordapp.com/icons/579688801614430222/65b77fc578d04f061b157795daa2cb75.webp?size=128")
@@ -120,6 +120,7 @@ class cmd_handler():
         embed.add_field(name=first_line, value=message_content[len(first_line):len(first_line)+120]+"...",inline=False)
         embed.add_field(name="Pour voir le message complet cliquez ici",value="[message]("+message_url+")",inline=False)
         embed.set_footer(text="Notification GETI Minecraft")
+        
         i=0
         if roles=="everyone":
             i=await send_dm_to_role(guild,"everyone","Vous avez une nouvelle notification:",embed=embed)
@@ -146,3 +147,40 @@ class cmd_handler():
 
         i=await send_dm_to_role(guild,role,send_message)
         return "Message envoyé à "+str(i)+" membre(s)"
+    
+    async def cmd_assignRole(self,message,args):
+        """Assigne un rôle à un groupe de personne selon si elle a ou pas un autre rôle
+        
+        Usage: !mine assignRole @role_à_assigner if/unless any/all @role_condition @role_condition2"""
+        if len(args)<5: return "❌ Votre commande ne contient pas assez d'arguments"
+        if not args[2] in ["if","unless"]: return "❌ Le deuxième argument doit être if ou unless"
+        if not args[3] in ["any","all"]: return "❌ Le troisième argument doit être any ou all"
+        
+        guild=message.channel.guild
+        members=guild.members
+        role_to_assign=guild.get_role(int(args[1][3:-1]))
+        if role_to_assign is None: return "❌ Vous n'avez pas précisé de rôle à assigner"
+        condition_roles=copy(message.role_mentions)
+        condition_roles.remove(role_to_assign)
+        
+        i=0
+        for member in members:
+            conditions=False
+            roles_to_find=copy(condition_roles)
+            for role in member.roles:
+                if role in roles_to_find:
+                    roles_to_find.remove(role)
+            
+            if args[3]=="all":
+                conditions=(len(roles_to_find)==0)
+            elif args[3]=="any":
+                conditions=(len(roles_to_find)<len(condition_roles))
+            
+            if args[2]=="unless":
+                conditions= not conditions
+            
+            if conditions:
+                await member.add_roles(role_to_assign,reason="Commande !mine assignRole par "+message.author.name)
+                i+=1
+        
+        return "Rôle assigné à "+str(i)+" membre(s) sur "+str(len(members))

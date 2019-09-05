@@ -44,9 +44,3 @@ async def purge_role(guild,role):
             await member.remove_roles(role)
             i+=1
     return i
-
-def escape_special_mentions(content):
-    message=content.replace("@deleted-role","")
-    #message=re.sub(r"<#([\s\S]){18}> ","",message)
-    message=re.sub(r"<@([\s\S]){19}>","",message)
-    return message
