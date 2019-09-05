@@ -165,6 +165,7 @@ class cmd_handler():
         
         i=0
         for member in members:
+            if member.bot: continue
             conditions=False
             roles_to_find=copy(condition_roles)
             for role in member.roles:
