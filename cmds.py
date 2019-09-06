@@ -147,7 +147,23 @@ class cmd_handler():
 
         i=await send_dm_to_role(guild,role,send_message)
         return "Message envoyé à "+str(i)+" membre(s)"
-    
+
+    async def cmd_assignRoleMc(self,message,args):
+        """Assigne le rôle MC aux membres du serveur qui possèdent dans leurs noms: [MC]
+        
+        Usage: !mine assignRoleMc"""
+
+        members=message.channel.guild.members
+        role=await getRole(self.client,message.channel.guild,"[MC]")
+        i=0
+        for member in members:
+            if member.bot: continue
+            if member.nick is not None and "[MC]" in member.nick:
+                await member.add_roles(role)
+                i+=1
+        
+        return "Rôle [MC] assigné à "+str(i)+" membres sur "+str(len(members))
+
     async def cmd_assignRole(self,message,args):
         """Assigne un rôle à un groupe de personne selon si elle a ou pas un autre rôle
         
