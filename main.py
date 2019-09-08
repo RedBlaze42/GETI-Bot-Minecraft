@@ -4,6 +4,7 @@ import json
 from tools import getToken,getRole,send_join_message
 import cmds
 
+log_channel=463449050163838988#581181334760849408
 client = discord.Client()
 cmd_handler=cmds.cmd_handler(client)
 
@@ -18,7 +19,7 @@ async def on_member_join(member):
 @client.event
 async def on_message(message):
     content=message.content
-    if not message.author.bot:
+    if not message.author.bot:#TODO: Reporter dans cmds.py
         if message.channel.type==discord.ChannelType.text:
             user_permissions = message.channel.permissions_for(message.author)
             if content.startswith("!mine ") and len(content.split(" "))>=2 and user_permissions.administrator:
@@ -26,8 +27,14 @@ async def on_message(message):
                 cmd_return = await cmd_handler.handle_cmd(message)
                 if cmd_return is not None:
                     await message.channel.send(cmd_return)
-        else:
-            await message.channel.send("❌ Désolé je ne peux pas encore éxecuter de commandes par message privé :sob:")
+        elif message.channel.type==discord.ChannelType.private:
+            channel=client.get_channel(log_channel)
+            if channel is not None:
+                await channel.send(message.author.name+" a écrit au bot: ```"+message.content+"```")
+                await message.add_reaction("📨")
+            else:
+                await message.channel.send("Je n'arrive pas à contacter les admins")
+            
 @client.event
 async def on_raw_reaction_add(payload):
     channel, guild, emoji = client.get_channel(payload.channel_id), client.get_guild(payload.guild_id), payload.emoji
