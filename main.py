@@ -38,7 +38,7 @@ async def on_message(message):
 @client.event
 async def on_raw_reaction_add(payload):
     channel, guild, emoji = client.get_channel(payload.channel_id), client.get_guild(payload.guild_id), payload.emoji
-    if guilt is not None:
+    if guild is not None:
         member, message = guild.get_member(payload.user_id),await channel.fetch_message(payload.message_id)
         if emoji.name.startswith("role_"):
             give_role = await getRole(client,guild,emoji.name.split("role_")[1])
