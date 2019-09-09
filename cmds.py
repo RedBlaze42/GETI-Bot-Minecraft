@@ -74,13 +74,13 @@ class cmd_handler():
         Usage: !mine unmuteChannel [all]
         """
         member=message.author
-        if member.voice is None: return "❌ Vous n'êtes pas dans un canal vocal"
+        if member.voice is None and len(args)<2: return "❌ Vous n'êtes pas dans un canal vocal"
         i=0
         members_not_unmuted=0
-        voice_channel=member.voice.channel
         if(len(args)>=2) and (args[1]=="all"):
             members=message.channel.guild.members
         else:
+            voice_channel=member.voice.channel
             members=voice_channel.members
         for member in members:
             if member.voice is not None and member.voice.mute:
