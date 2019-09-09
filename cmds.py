@@ -70,16 +70,20 @@ class cmd_handler():
 
     async def cmd_unmuteChannel(self,message,args):
         """Unmute tout les membres qui le sont dans le channel vocal ou vous êtes
-        
-        Usage: !mine unmuteChannel
+        Ajoutez all pour unmute tout les membres du serveur
+        Usage: !mine unmuteChannel [all]
         """
         member=message.author
         if member.voice is None: return "❌ Vous n'êtes pas dans un canal vocal"
         i=0
         members_not_unmuted=0
         voice_channel=member.voice.channel
-        for member in voice_channel.members:
-            if member.voice.mute:
+        if(len(args)>=2) and (args[1]=="all"):
+            members=message.channel.guild.members
+        else:
+            members=voice_channel.members
+        for member in members:
+            if member.voice is not None and member.voice.mute:
                 await member.edit(mute=False,deafen=False)
                 i+=1
             else: 
