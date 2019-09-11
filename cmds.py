@@ -149,7 +149,7 @@ class cmd_handler():
         guild = message.channel.guild
         send_message=" ".join(args[2:])
 
-        i=await send_dm_to_role(guild,role,send_message)
+        i=await send_dm_to_role(guild,role,send_message,important=True)
         return "Message envoyé à "+str(i)+" membre(s)"
 
     async def cmd_assignRoleMc(self,message,args):

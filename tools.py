@@ -26,9 +26,10 @@ async def send_join_message(member):
     embed.add_field(name="Vous inscrire", value="Pour vous inscrire à ces évènements il faut vous rendre sur ce [message](https://discordapp.com/channels/579688801614430222/585843555826663434/615943002485161985)",inline=False)
     await member.send(embed=embed)
 
-async def send_dm_to_role(guild,role,send_message,embed=None):
+async def send_dm_to_role(guild,role,send_message,embed=None,important=False):
     i=0
     for member in guild.members:
+        if not important and "noping" in [role.name for role in member.roles]: continue
         if (role in member.roles or role=="everyone") and not member.bot:
             try:
                 await member.send(send_message,embed=embed)
