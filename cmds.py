@@ -126,11 +126,13 @@ class cmd_handler():
         embed.set_footer(text="Notification GETI Minecraft")
         
         i=0
+        already_sended=list()
         if roles=="everyone":
             i=await send_dm_to_role(guild,"everyone","Vous avez une nouvelle notification:",embed=embed)
         else:
             for role in roles:
-                j=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed)
+                j,just_sent=await send_dm_to_role(guild,role,"Vous avez une nouvelle notification:",embed=embed,member_blacklist=already_sended)
+                already_sended.extend(just_sent)
                 i+=j
         await cmd.delete()
         await cmd.channel.send("Message envoyé à "+str(i)+" membre(s)",delete_after=5)
@@ -149,7 +151,7 @@ class cmd_handler():
         guild = message.channel.guild
         send_message=" ".join(args[2:])
 
-        i=await send_dm_to_role(guild,role,send_message,important=True)
+        i,_=await send_dm_to_role(guild,role,send_message,important=True)
         return "Message envoyé à "+str(i)+" membre(s)"
 
     async def cmd_assignRoleMc(self,message,args):

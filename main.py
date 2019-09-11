@@ -37,9 +37,9 @@ async def on_message(message):
             
 @client.event
 async def on_raw_reaction_add(payload):
-    channel, guild, emoji = client.get_channel(payload.channel_id), client.get_guild(payload.guild_id), payload.emoji
+    guild, emoji = client.get_guild(payload.guild_id), payload.emoji
     if guild is not None:
-        member, message = guild.get_member(payload.user_id),await channel.fetch_message(payload.message_id)
+        member= guild.get_member(payload.user_id)
         if emoji.name.startswith("role_"):
             give_role = await getRole(client,guild,emoji.name.split("role_")[1])
             await member.add_roles(give_role)
@@ -48,8 +48,8 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    channel, guild, emoji = client.get_channel(payload.channel_id), client.get_guild(payload.guild_id), payload.emoji
-    member, message = guild.get_member(payload.user_id),await channel.fetch_message(payload.message_id)
+    guild, emoji = client.get_guild(payload.guild_id), payload.emoji
+    member= guild.get_member(payload.user_id)
     if emoji.name.startswith("role_"):
         give_role = await getRole(client,guild,emoji.name.split("role_")[1])
         await member.remove_roles(give_role)
