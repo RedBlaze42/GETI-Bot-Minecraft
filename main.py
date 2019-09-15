@@ -2,11 +2,11 @@
 import discord
 import json
 from tools import getToken,getRole,send_join_message
-import cmds
+import cmd_handler
 
 log_channel=581181334760849408
 client = discord.Client()
-cmd_handler=cmds.cmd_handler(client)
+cmds=cmd_handler.cmd_handler(client)
 
 @client.event
 async def on_ready():
@@ -19,14 +19,11 @@ async def on_member_join(member):
 @client.event
 async def on_message(message):
     content=message.content
-    if not message.author.bot:#TODO: Reporter dans cmds.py
+    if not message.author.bot:
         if message.channel.type==discord.ChannelType.text:
-            user_permissions = message.channel.permissions_for(message.author)
-            if content.startswith("!mine ") and len(content.split(" "))>=2 and user_permissions.administrator:
+            if content.startswith("!mine ") and len(content.split(" "))>=2:
                 await message.channel.trigger_typing()
-                cmd_return = await cmd_handler.handle_cmd(message)
-                if cmd_return is not None:
-                    await message.channel.send(cmd_return)
+                cmd_return = await cmds.handle_cmd(message)
         elif message.channel.type==discord.ChannelType.private:
             channel=client.get_channel(log_channel)
             if channel is not None:

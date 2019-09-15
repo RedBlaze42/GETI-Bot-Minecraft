@@ -1,6 +1,7 @@
-# coding: utf8
 import discord
 import re
+
+#TODO Regrouper les tools.py
 
 def getToken():
     with open("token.secret","r") as tokenFile:
