@@ -4,8 +4,9 @@ from tools import *
 class private_messages(DefaultCmdClass):
     required_permissions=131072
 
-    def __init__(self,client):
-        self.client=client
+    def __init__(self,bot):
+        self.bot=bot
+        self.client=bot.client
 
     async def cmd_dmRole(self,message,args):
         """Permet d'envoyer un message privé à tout les membres d'un rôle

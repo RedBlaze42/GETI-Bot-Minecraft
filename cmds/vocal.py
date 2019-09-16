@@ -4,8 +4,9 @@ from .DefaultCmdClass import DefaultCmdClass
 class vocal(DefaultCmdClass):
     required_permissions=29360128
 
-    def __init__(self,client):
-        self.client=client
+    def __init__(self,bot):
+        self.bot=bot
+        self.client=bot.client
 
     async def cmd_muteChannel(self,message,args):
         """Mute tout les membres qui n'ont pas la permission de mute d'autre membres dans le channel vocal ou vous êtes

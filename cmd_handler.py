@@ -3,17 +3,17 @@ import inspect
 from tools import *
 import cmds
 
-# coding: utf8
 class cmd_handler():
     
-    def __init__(self, client):
-        self.client=client
+    def __init__(self, bot):
+        self.bot=bot
+        self.client=bot.client
         self.cmd_files=cmds.modules
         self.cmd_objects=list()
         for module in self.cmd_files:
             module_class=[getattr(module,class_name) for class_name in dir(module) if inspect.isclass(getattr(module,class_name)) and class_name!="DefaultCmdClass"]#TODO Trouver autre moyen d'ignorer la superclass
             for cmd_class in module_class:
-                self.cmd_objects.append(cmd_class(client))
+                self.cmd_objects.append(cmd_class(self.bot))
 
         self.cmd_dict=dict()
         for cmd_class in self.cmd_objects:
@@ -42,7 +42,7 @@ class cmd_handler():
             sender_permissions=sender.guild_permissions
         else:
             sender_permissions=channel.permissions_for(sender)
-        return sender.guild_permissions>=cmd_permissions
+        return sender_permissions>=cmd_permissions
 
     async def handle_cmd(self,message):
         args = message.content.split(" ")[1:]
