@@ -48,7 +48,8 @@ class cmd_handler():
         args = message.content.split(" ")[1:]
         if args[0] in self.cmd_dict.keys():
             cmd=self.cmd_dict[args[0]]
-            if self.permissions_for_cmd(message.author,cmd,channel=message.channel):
+            access_granted=await self.permissions_for_cmd(message.author,cmd,channel=message.channel)
+            if access_granted:
                 cmd_return=await cmd(message,args)
                 if cmd_return is not None:
                     await message.channel.send(cmd_return)
@@ -66,7 +67,8 @@ class cmd_handler():
         help_embed=discord.Embed(title="Aide du bot GETI-Minecraft (préfix: !mine)",color=65310)
         help_embed.add_field(name="help ",value="Retourne la liste des commandes, Pour connaître leurs usages: !mine help détail")
         for func,func_doc in help_list:
-            if not self.permissions_for_cmd(message.author,func): continue
+            access_granted=await self.permissions_for_cmd(message.author,func)
+            if not access_granted: continue
             func_name=func.__name__.replace("cmd_","")
             if len(args)>=2 and args[1]=="détail":
                 help_embed.add_field(name=func_name,value=func_doc)

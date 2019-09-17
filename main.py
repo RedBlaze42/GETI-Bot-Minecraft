@@ -2,7 +2,7 @@
 import discord
 from bot import bot as bot_class
 import json
-from tools import getToken,getRole,send_join_message
+from tools import getRole,send_join_message
 import cmd_handler
 
 bot=bot_class()
@@ -33,6 +33,11 @@ async def on_message(message):
             else:
                 await message.channel.send("Je n'arrive pas à contacter les admins")
             
+#@client.event
+async def on_error(event,*args,**kwargs):
+    if bot.config._contains("log_channel"):
+        await client.get_channel(bot.config.log_channel).send("Erreur lors d'un évènement de type: "+event)
+
 @client.event
 async def on_raw_reaction_add(payload):
     guild, emoji = client.get_guild(payload.guild_id), payload.emoji
@@ -54,4 +59,4 @@ async def on_raw_reaction_remove(payload):
         await member.send("Je vous ai enlevé le role "+give_role.name)
 
 print("Initializing...")
-client.run(getToken())
+client.run(bot.token)
