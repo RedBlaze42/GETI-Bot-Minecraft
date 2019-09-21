@@ -2,7 +2,7 @@ from .DefaultCmdClass import DefaultCmdClass
 from tools import *
 
 class private_messages(DefaultCmdClass):
-    required_permissions=131072
+    required_permissions=268435456
 
     def __init__(self,client):
         self.client=client
