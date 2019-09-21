@@ -1,12 +1,13 @@
 # coding: utf8
 import discord
+from bot import bot as bot_class
 import json
-from tools import getToken,getRole,send_join_message
+from tools import getRole,send_join_message
 import cmd_handler
 
-log_channel=581181334760849408
-client = discord.Client()
-cmds=cmd_handler.cmd_handler(client)
+bot=bot_class()
+client=bot.client
+cmds=cmd_handler.cmd_handler(bot)
 
 @client.event
 async def on_ready():
@@ -23,15 +24,20 @@ async def on_message(message):
         if message.channel.type==discord.ChannelType.text:
             if content.startswith("!mine ") and len(content.split(" "))>=2:
                 await message.channel.trigger_typing()
-                cmd_return = await cmds.handle_cmd(message)
+                await cmds.handle_cmd(message)
         elif message.channel.type==discord.ChannelType.private:
-            channel=client.get_channel(log_channel)
+            channel=client.get_channel(bot.config.log_channel)
             if channel is not None:
                 await channel.send(message.author.name+" a écrit au bot: ```"+message.content+"```")
                 await message.add_reaction("📨")
             else:
                 await message.channel.send("Je n'arrive pas à contacter les admins")
             
+#@client.event
+async def on_error(event,*args,**kwargs):
+    if bot.config._contains("log_channel"):
+        await client.get_channel(bot.config.log_channel).send("Erreur lors d'un évènement de type: "+event)
+
 @client.event
 async def on_raw_reaction_add(payload):
     guild, emoji = client.get_guild(payload.guild_id), payload.emoji
@@ -53,4 +59,4 @@ async def on_raw_reaction_remove(payload):
         await member.send("Je vous ai enlevé le role "+give_role.name)
 
 print("Initializing...")
-client.run(getToken())
+client.run(bot.token)

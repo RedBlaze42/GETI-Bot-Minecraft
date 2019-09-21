@@ -5,8 +5,9 @@ from .DefaultCmdClass import DefaultCmdClass
 class role(DefaultCmdClass):
     required_permissions=268435456
 
-    def __init__(self,client):
-        self.client=client
+    def __init__(self,bot):
+        self.bot=bot
+        self.client=bot.client
 
     async def cmd_purgeRoles(self,message,args):
         """Purge un rôle ou plusieurs rôles de tout ses membres

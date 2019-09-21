@@ -4,8 +4,9 @@ from ..DefaultCmdClass import DefaultCmdClass
 class mc_role(DefaultCmdClass):
     required_permissions=268435456
 
-    def __init__(self,client):
-        self.client=client
+    def __init__(self,bot):
+        self.bot=bot
+        self.client=bot.client
 
     async def cmd_assignRoleMc(self,message,args):
         """Assigne le rôle MC aux membres du serveur qui possèdent dans leurs noms: [MC]
