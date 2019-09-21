@@ -35,7 +35,7 @@ class cmd_handler():
             
         return dict(zip(method_list,doc_list))
 
-    async def permissions_for_cmd(self,sender,cmd,channel=None):#TODO Check for devboss and home_server
+    def permissions_for_cmd(self,sender,cmd,channel=None):#TODO Check for devboss and home_server
         cmd_class=cmd.__self__
         cmd_permissions=discord.Permissions(cmd_class.required_permissions)
         if channel is None:
