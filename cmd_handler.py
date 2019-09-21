@@ -3,17 +3,17 @@ import inspect
 from tools import *
 import cmds
 
+# coding: utf8
 class cmd_handler():
     
-    def __init__(self, bot):
-        self.bot=bot
-        self.client=bot.client
+    def __init__(self, client):
+        self.client=client
         self.cmd_files=cmds.modules
         self.cmd_objects=list()
         for module in self.cmd_files:
             module_class=[getattr(module,class_name) for class_name in dir(module) if inspect.isclass(getattr(module,class_name)) and class_name!="DefaultCmdClass"]#TODO Trouver autre moyen d'ignorer la superclass
             for cmd_class in module_class:
-                self.cmd_objects.append(cmd_class(self.bot))
+                self.cmd_objects.append(cmd_class(client))
 
         self.cmd_dict=dict()
         for cmd_class in self.cmd_objects:
@@ -42,14 +42,13 @@ class cmd_handler():
             sender_permissions=sender.guild_permissions
         else:
             sender_permissions=channel.permissions_for(sender)
-        return sender_permissions>=cmd_permissions
+        return sender.guild_permissions>=cmd_permissions
 
     async def handle_cmd(self,message):
         args = message.content.split(" ")[1:]
         if args[0] in self.cmd_dict.keys():
             cmd=self.cmd_dict[args[0]]
-            access_granted=await self.permissions_for_cmd(message.author,cmd,channel=message.channel)
-            if access_granted:
+            if self.permissions_for_cmd(message.author,cmd,channel=message.channel):
                 cmd_return=await cmd(message,args)
                 if cmd_return is not None:
                     await message.channel.send(cmd_return)
@@ -67,8 +66,7 @@ class cmd_handler():
         help_embed=discord.Embed(title="Aide du bot GETI-Minecraft (préfix: !mine)",color=65310)
         help_embed.add_field(name="help ",value="Retourne la liste des commandes, Pour connaître leurs usages: !mine help détail")
         for func,func_doc in help_list:
-            access_granted=await self.permissions_for_cmd(message.author,func)
-            if not access_granted: continue
+            if not self.permissions_for_cmd(message.author,func): continue
             func_name=func.__name__.replace("cmd_","")
             if len(args)>=2 and args[1]=="détail":
                 help_embed.add_field(name=func_name,value=func_doc)
